@@ -352,7 +352,10 @@ static int SkyEyePageSizeCount = 120;
         }
         
         packObj.headIndex = head;
-        [_getDataMKV close];
+        if(![_currentDataConfig.fileName isEqualToString:_getDataConfig.fileName] && _getDataMKV != _currentMKV){
+            //底层有根据mmapid缓存mmap对象，正在使用的mmap对象不能close，否则会报错
+            [_getDataMKV close];
+        }
         
         return packObj;
     }
@@ -399,7 +402,10 @@ static int SkyEyePageSizeCount = 120;
         
         
         [_getDataMKV removeValueForKey:removeKey];
-        [_getDataMKV close];
+        if(![_currentDataConfig.fileName isEqualToString:pObject.fileName] && _getDataMKV != _currentMKV) {
+            //底层有根据mmapid缓存mmap对象，正在使用的mmap对象不能close，否则会报错
+            [_getDataMKV close];
+        }
         
         SkyEyeMMAPQueue * _queue = [self getQueueWithType:pObject.type];
         [_queue queueHeadMove];

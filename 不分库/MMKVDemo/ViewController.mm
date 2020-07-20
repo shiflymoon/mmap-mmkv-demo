@@ -20,7 +20,7 @@
 
 #import "ViewController.h"
 #import "MMKVDemo-Swift.h"
-#import <MMKV/SkyEyeMFKV.h>
+#import "SkyEyeMFKV.h"
 #import "PersonObject.h"
 #import "SkyEyeDataManager.h"
 #import "SkyEyePackObject.h"

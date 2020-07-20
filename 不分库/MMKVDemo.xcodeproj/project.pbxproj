@@ -13,11 +13,9 @@
 		CB1FD42D20455E2D00931B5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB1FD42C20455E2D00931B5F /* Assets.xcassets */; };
 		CB1FD43020455E2D00931B5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CB1FD42E20455E2D00931B5F /* LaunchScreen.storyboard */; };
 		CB1FD43320455E2D00931B5F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CB1FD43220455E2D00931B5F /* main.m */; };
-		CB1FD4B82046995E00931B5F /* libMMKV Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB1FD4B52046994D00931B5F /* libMMKV Static.a */; };
 		CB1FD4D22046AF2400931B5F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CB1FD4D12046AF2300931B5F /* libz.tbd */; };
 		CB36F24C20F8A20C009AF46F /* MMKVDemoTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB36F24B20F8A20C009AF46F /* MMKVDemoTests.mm */; };
 		CB36F25A20F8D728009AF46F /* MMKVPerformanceTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB36F25920F8D728009AF46F /* MMKVPerformanceTest.mm */; };
-		CB9C2731215E5DF000448B6C /* libMMKV Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB1FD4B52046994D00931B5F /* libMMKV Static.a */; };
 		CB9C2733215E5ECC00448B6C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CB9C2732215E5ECC00448B6C /* libz.tbd */; };
 		CB9F963920FCA7C500A1C14C /* DemoSwiftUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9F963820FCA7C500A1C14C /* DemoSwiftUsage.swift */; };
 		CBB6C823215CDB9500487192 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB6C822215CDB9500487192 /* AppDelegate.m */; };
@@ -31,43 +29,33 @@
 		FB464DC82493216700A9B40F /* SkyEyeDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB464DC72493216700A9B40F /* SkyEyeDataManager.m */; };
 		FB9A7B4424A20A9E00EC517B /* AppUsedMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = FB9A7B4324A20A9E00EC517B /* AppUsedMemory.m */; };
 		FBBDB9E4249A4CA8003CF459 /* SkyEyeDataConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = FBBDB9E3249A4CA8003CF459 /* SkyEyeDataConfig.m */; };
+		FBE7A02C24C5986F00AC4CFA /* SkyEyePackObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FBE79FFE24C5986F00AC4CFA /* SkyEyePackObject.m */; };
+		FBE7A02D24C5986F00AC4CFA /* SkyEyeDataConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A00024C5986F00AC4CFA /* SkyEyeDataConfig.m */; };
+		FBE7A02E24C5986F00AC4CFA /* SkyEyeMiniPBCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A00724C5986F00AC4CFA /* SkyEyeMiniPBCoder.mm */; };
+		FBE7A02F24C5986F00AC4CFA /* SkyEyeDataManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A00924C5986F00AC4CFA /* SkyEyeDataManager.mm */; };
+		FBE7A03024C5986F00AC4CFA /* SkyEyeMiniPBUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A00A24C5986F00AC4CFA /* SkyEyeMiniPBUtility.mm */; };
+		FBE7A03124C5986F00AC4CFA /* SkyEyeMiniCodedOutputData.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A00B24C5986F00AC4CFA /* SkyEyeMiniCodedOutputData.mm */; };
+		FBE7A03224C5986F00AC4CFA /* SkyEyeMMAPQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A00D24C5986F00AC4CFA /* SkyEyeMMAPQueue.m */; };
+		FBE7A03324C5986F00AC4CFA /* SkyEyeMiniCodedInputData.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A01024C5986F00AC4CFA /* SkyEyeMiniCodedInputData.mm */; };
+		FBE7A03424C5986F00AC4CFA /* SkyEyeMMKVLog.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A01524C5986F00AC4CFA /* SkyEyeMMKVLog.mm */; };
+		FBE7A03524C5986F00AC4CFA /* SkyEyeFileConfig.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A01824C5986F00AC4CFA /* SkyEyeFileConfig.mm */; };
+		FBE7A03624C5986F00AC4CFA /* SkyEyeMemoryFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A01924C5986F00AC4CFA /* SkyEyeMemoryFile.mm */; };
+		FBE7A03724C5986F00AC4CFA /* SkyEyeMFKV.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A01B24C5986F00AC4CFA /* SkyEyeMFKV.mm */; };
+		FBE7A03824C5986F00AC4CFA /* SkyEyeAESCrypt.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A01D24C5986F00AC4CFA /* SkyEyeAESCrypt.mm */; };
+		FBE7A03924C5986F00AC4CFA /* skyeye_openssl_aes_cfb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A02024C5986F00AC4CFA /* skyeye_openssl_aes_cfb.cpp */; };
+		FBE7A03A24C5986F00AC4CFA /* skyeye_openssl_md5_dgst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A02224C5986F00AC4CFA /* skyeye_openssl_md5_dgst.cpp */; };
+		FBE7A03B24C5986F00AC4CFA /* skyeye_openssl_md5_one.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A02324C5986F00AC4CFA /* skyeye_openssl_md5_one.cpp */; };
+		FBE7A03C24C5986F00AC4CFA /* skyeye_openssl_cfb128.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A02524C5986F00AC4CFA /* skyeye_openssl_cfb128.cpp */; };
+		FBE7A03D24C5986F00AC4CFA /* skyeye_openssl_aes_core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBE7A02A24C5986F00AC4CFA /* skyeye_openssl_aes_core.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CB1FD4B42046994D00931B5F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CB1FD4B02046994C00931B5F /* MMKV.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CB1FD4912046984F00931B5F;
-			remoteInfo = MMKV;
-		};
-		CB1FD4B62046995B00931B5F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CB1FD4B02046994C00931B5F /* MMKV.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CB1FD4902046984F00931B5F;
-			remoteInfo = MMKV;
-		};
 		CB36F24E20F8A20C009AF46F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CB1FD41820455E2D00931B5F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CB1FD41F20455E2D00931B5F;
 			remoteInfo = MMKVDemo;
-		};
-		CB36F25320F8A20C009AF46F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CB1FD4B02046994C00931B5F /* MMKV.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CBC1A8F620DA946200AD5087;
-			remoteInfo = MMKV;
-		};
-		CB9C272F215E5D2400448B6C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CB1FD4B02046994C00931B5F /* MMKV.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CB1FD4902046984F00931B5F;
-			remoteInfo = "MMKV Static";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -82,7 +70,6 @@
 		CB1FD42F20455E2D00931B5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CB1FD43120455E2D00931B5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CB1FD43220455E2D00931B5F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CB1FD4B02046994C00931B5F /* MMKV.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMKV.xcodeproj; path = ../MMKV/MMKV.xcodeproj; sourceTree = "<group>"; };
 		CB1FD4D12046AF2300931B5F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		CB36F24920F8A20C009AF46F /* MMKVDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMKVDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB36F24B20F8A20C009AF46F /* MMKVDemoTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MMKVDemoTests.mm; sourceTree = "<group>"; };
@@ -113,6 +100,52 @@
 		FB9A7B4324A20A9E00EC517B /* AppUsedMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppUsedMemory.m; sourceTree = "<group>"; };
 		FBBDB9E2249A4CA8003CF459 /* SkyEyeDataConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SkyEyeDataConfig.h; sourceTree = "<group>"; };
 		FBBDB9E3249A4CA8003CF459 /* SkyEyeDataConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SkyEyeDataConfig.m; sourceTree = "<group>"; };
+		FBE79FFD24C5986F00AC4CFA /* SkyEyeMMAPQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMMAPQueue.h; sourceTree = "<group>"; };
+		FBE79FFE24C5986F00AC4CFA /* SkyEyePackObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SkyEyePackObject.m; sourceTree = "<group>"; };
+		FBE79FFF24C5986F00AC4CFA /* SkyEyeMiniPBEncodeItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMiniPBEncodeItem.h; sourceTree = "<group>"; };
+		FBE7A00024C5986F00AC4CFA /* SkyEyeDataConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SkyEyeDataConfig.m; sourceTree = "<group>"; };
+		FBE7A00124C5986F00AC4CFA /* SkyEyeLRUCache.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SkyEyeLRUCache.hpp; sourceTree = "<group>"; };
+		FBE7A00224C5986F00AC4CFA /* SkyEyeDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeDataManager.h; sourceTree = "<group>"; };
+		FBE7A00324C5986F00AC4CFA /* SkyEyeMMKVLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMMKVLog.h; sourceTree = "<group>"; };
+		FBE7A00424C5986F00AC4CFA /* SkyEyeMiniCodedInputData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMiniCodedInputData.h; sourceTree = "<group>"; };
+		FBE7A00524C5986F00AC4CFA /* SkyEyeMFKV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMFKV.h; sourceTree = "<group>"; };
+		FBE7A00624C5986F00AC4CFA /* SkyEyeP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeP.h; sourceTree = "<group>"; };
+		FBE7A00724C5986F00AC4CFA /* SkyEyeMiniPBCoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeMiniPBCoder.mm; sourceTree = "<group>"; };
+		FBE7A00824C5986F00AC4CFA /* SkyEyeMiniCodedOutputData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMiniCodedOutputData.h; sourceTree = "<group>"; };
+		FBE7A00924C5986F00AC4CFA /* SkyEyeDataManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeDataManager.mm; sourceTree = "<group>"; };
+		FBE7A00A24C5986F00AC4CFA /* SkyEyeMiniPBUtility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeMiniPBUtility.mm; sourceTree = "<group>"; };
+		FBE7A00B24C5986F00AC4CFA /* SkyEyeMiniCodedOutputData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeMiniCodedOutputData.mm; sourceTree = "<group>"; };
+		FBE7A00C24C5986F00AC4CFA /* SkyEyePackObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyePackObject.h; sourceTree = "<group>"; };
+		FBE7A00D24C5986F00AC4CFA /* SkyEyeMMAPQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SkyEyeMMAPQueue.m; sourceTree = "<group>"; };
+		FBE7A00E24C5986F00AC4CFA /* SkyEyeScopedLock.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SkyEyeScopedLock.hpp; sourceTree = "<group>"; };
+		FBE7A00F24C5986F00AC4CFA /* SkyEyeFileConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeFileConfig.h; sourceTree = "<group>"; };
+		FBE7A01024C5986F00AC4CFA /* SkyEyeMiniCodedInputData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeMiniCodedInputData.mm; sourceTree = "<group>"; };
+		FBE7A01124C5986F00AC4CFA /* SkyEyeDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeDefine.h; sourceTree = "<group>"; };
+		FBE7A01224C5986F00AC4CFA /* SkyEyeMiniPBUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMiniPBUtility.h; sourceTree = "<group>"; };
+		FBE7A01324C5986F00AC4CFA /* SkyEyeDataConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeDataConfig.h; sourceTree = "<group>"; };
+		FBE7A01424C5986F00AC4CFA /* SkyEyeMMKVMetaInfo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SkyEyeMMKVMetaInfo.hpp; sourceTree = "<group>"; };
+		FBE7A01524C5986F00AC4CFA /* SkyEyeMMKVLog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeMMKVLog.mm; sourceTree = "<group>"; };
+		FBE7A01624C5986F00AC4CFA /* SkyEyeMiniPBCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMiniPBCoder.h; sourceTree = "<group>"; };
+		FBE7A01724C5986F00AC4CFA /* SkyEyeMemoryFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeMemoryFile.h; sourceTree = "<group>"; };
+		FBE7A01824C5986F00AC4CFA /* SkyEyeFileConfig.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeFileConfig.mm; sourceTree = "<group>"; };
+		FBE7A01924C5986F00AC4CFA /* SkyEyeMemoryFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeMemoryFile.mm; sourceTree = "<group>"; };
+		FBE7A01A24C5986F00AC4CFA /* SkyEyeMMKVHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SkyEyeMMKVHandler.h; sourceTree = "<group>"; };
+		FBE7A01B24C5986F00AC4CFA /* SkyEyeMFKV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeMFKV.mm; sourceTree = "<group>"; };
+		FBE7A01D24C5986F00AC4CFA /* SkyEyeAESCrypt.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SkyEyeAESCrypt.mm; sourceTree = "<group>"; };
+		FBE7A01E24C5986F00AC4CFA /* SkyEyeAESCrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyEyeAESCrypt.h; sourceTree = "<group>"; };
+		FBE7A02024C5986F00AC4CFA /* skyeye_openssl_aes_cfb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = skyeye_openssl_aes_cfb.cpp; sourceTree = "<group>"; };
+		FBE7A02124C5986F00AC4CFA /* skyeye_openssl_md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = skyeye_openssl_md5.h; sourceTree = "<group>"; };
+		FBE7A02224C5986F00AC4CFA /* skyeye_openssl_md5_dgst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = skyeye_openssl_md5_dgst.cpp; sourceTree = "<group>"; };
+		FBE7A02324C5986F00AC4CFA /* skyeye_openssl_md5_one.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = skyeye_openssl_md5_one.cpp; sourceTree = "<group>"; };
+		FBE7A02424C5986F00AC4CFA /* skyeye_openssl_opensslconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = skyeye_openssl_opensslconf.h; sourceTree = "<group>"; };
+		FBE7A02524C5986F00AC4CFA /* skyeye_openssl_cfb128.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = skyeye_openssl_cfb128.cpp; sourceTree = "<group>"; };
+		FBE7A02624C5986F00AC4CFA /* skyeye_openssl_md5_locl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = skyeye_openssl_md5_locl.h; sourceTree = "<group>"; };
+		FBE7A02724C5986F00AC4CFA /* skyeye_openssl_modes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = skyeye_openssl_modes.h; sourceTree = "<group>"; };
+		FBE7A02824C5986F00AC4CFA /* skyeye_openssl_md32_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = skyeye_openssl_md32_common.h; sourceTree = "<group>"; };
+		FBE7A02924C5986F00AC4CFA /* skyeye_openssl_aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = skyeye_openssl_aes.h; sourceTree = "<group>"; };
+		FBE7A02A24C5986F00AC4CFA /* skyeye_openssl_aes_core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = skyeye_openssl_aes_core.cpp; sourceTree = "<group>"; };
+		FBE7A02B24C5986F00AC4CFA /* skyeye_openssl_aes_locl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = skyeye_openssl_aes_locl.h; sourceTree = "<group>"; };
+		FBE7A03E24C5993F00AC4CFA /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,7 +154,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB1FD4D22046AF2400931B5F /* libz.tbd in Frameworks */,
-				CB1FD4B82046995E00931B5F /* libMMKV Static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,7 +169,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB9C2733215E5ECC00448B6C /* libz.tbd in Frameworks */,
-				CB9C2731215E5DF000448B6C /* libMMKV Static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,7 +178,6 @@
 		CB1FD41720455E2D00931B5F = {
 			isa = PBXGroup;
 			children = (
-				CB1FD4B02046994C00931B5F /* MMKV.xcodeproj */,
 				CB1FD42220455E2D00931B5F /* MMKVDemo */,
 				CB36F24A20F8A20C009AF46F /* MMKVDemoTests */,
 				CBB6C820215CDB9500487192 /* MMKVMacDemo */,
@@ -169,6 +199,7 @@
 		CB1FD42220455E2D00931B5F /* MMKVDemo */ = {
 			isa = PBXGroup;
 			children = (
+				FBE79FFC24C5986F00AC4CFA /* MMKV */,
 				CB1FD42320455E2D00931B5F /* AppDelegate.h */,
 				CB1FD42420455E2D00931B5F /* AppDelegate.m */,
 				CB1FD42C20455E2D00931B5F /* Assets.xcassets */,
@@ -192,6 +223,7 @@
 				FB464DC72493216700A9B40F /* SkyEyeDataManager.m */,
 				FB9A7B4224A20A9E00EC517B /* AppUsedMemory.h */,
 				FB9A7B4324A20A9E00EC517B /* AppUsedMemory.m */,
+				FBE7A03E24C5993F00AC4CFA /* PrefixHeader.pch */,
 			);
 			path = MMKVDemo;
 			sourceTree = "<group>";
@@ -203,15 +235,6 @@
 				CB1FD4D12046AF2300931B5F /* libz.tbd */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CB1FD4B12046994C00931B5F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CB1FD4B52046994D00931B5F /* libMMKV Static.a */,
-				CB36F25420F8A20C009AF46F /* MMKV.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CB36F24A20F8A20C009AF46F /* MMKVDemoTests */ = {
@@ -240,6 +263,74 @@
 			path = MMKVMacDemo;
 			sourceTree = "<group>";
 		};
+		FBE79FFC24C5986F00AC4CFA /* MMKV */ = {
+			isa = PBXGroup;
+			children = (
+				FBE79FFD24C5986F00AC4CFA /* SkyEyeMMAPQueue.h */,
+				FBE79FFE24C5986F00AC4CFA /* SkyEyePackObject.m */,
+				FBE79FFF24C5986F00AC4CFA /* SkyEyeMiniPBEncodeItem.h */,
+				FBE7A00024C5986F00AC4CFA /* SkyEyeDataConfig.m */,
+				FBE7A00124C5986F00AC4CFA /* SkyEyeLRUCache.hpp */,
+				FBE7A00224C5986F00AC4CFA /* SkyEyeDataManager.h */,
+				FBE7A00324C5986F00AC4CFA /* SkyEyeMMKVLog.h */,
+				FBE7A00424C5986F00AC4CFA /* SkyEyeMiniCodedInputData.h */,
+				FBE7A00524C5986F00AC4CFA /* SkyEyeMFKV.h */,
+				FBE7A00624C5986F00AC4CFA /* SkyEyeP.h */,
+				FBE7A00724C5986F00AC4CFA /* SkyEyeMiniPBCoder.mm */,
+				FBE7A00824C5986F00AC4CFA /* SkyEyeMiniCodedOutputData.h */,
+				FBE7A00924C5986F00AC4CFA /* SkyEyeDataManager.mm */,
+				FBE7A00A24C5986F00AC4CFA /* SkyEyeMiniPBUtility.mm */,
+				FBE7A00B24C5986F00AC4CFA /* SkyEyeMiniCodedOutputData.mm */,
+				FBE7A00C24C5986F00AC4CFA /* SkyEyePackObject.h */,
+				FBE7A00D24C5986F00AC4CFA /* SkyEyeMMAPQueue.m */,
+				FBE7A00E24C5986F00AC4CFA /* SkyEyeScopedLock.hpp */,
+				FBE7A00F24C5986F00AC4CFA /* SkyEyeFileConfig.h */,
+				FBE7A01024C5986F00AC4CFA /* SkyEyeMiniCodedInputData.mm */,
+				FBE7A01124C5986F00AC4CFA /* SkyEyeDefine.h */,
+				FBE7A01224C5986F00AC4CFA /* SkyEyeMiniPBUtility.h */,
+				FBE7A01324C5986F00AC4CFA /* SkyEyeDataConfig.h */,
+				FBE7A01424C5986F00AC4CFA /* SkyEyeMMKVMetaInfo.hpp */,
+				FBE7A01524C5986F00AC4CFA /* SkyEyeMMKVLog.mm */,
+				FBE7A01624C5986F00AC4CFA /* SkyEyeMiniPBCoder.h */,
+				FBE7A01724C5986F00AC4CFA /* SkyEyeMemoryFile.h */,
+				FBE7A01824C5986F00AC4CFA /* SkyEyeFileConfig.mm */,
+				FBE7A01924C5986F00AC4CFA /* SkyEyeMemoryFile.mm */,
+				FBE7A01A24C5986F00AC4CFA /* SkyEyeMMKVHandler.h */,
+				FBE7A01B24C5986F00AC4CFA /* SkyEyeMFKV.mm */,
+				FBE7A01C24C5986F00AC4CFA /* aes */,
+			);
+			path = MMKV;
+			sourceTree = "<group>";
+		};
+		FBE7A01C24C5986F00AC4CFA /* aes */ = {
+			isa = PBXGroup;
+			children = (
+				FBE7A01D24C5986F00AC4CFA /* SkyEyeAESCrypt.mm */,
+				FBE7A01E24C5986F00AC4CFA /* SkyEyeAESCrypt.h */,
+				FBE7A01F24C5986F00AC4CFA /* openssl */,
+			);
+			path = aes;
+			sourceTree = "<group>";
+		};
+		FBE7A01F24C5986F00AC4CFA /* openssl */ = {
+			isa = PBXGroup;
+			children = (
+				FBE7A02024C5986F00AC4CFA /* skyeye_openssl_aes_cfb.cpp */,
+				FBE7A02124C5986F00AC4CFA /* skyeye_openssl_md5.h */,
+				FBE7A02224C5986F00AC4CFA /* skyeye_openssl_md5_dgst.cpp */,
+				FBE7A02324C5986F00AC4CFA /* skyeye_openssl_md5_one.cpp */,
+				FBE7A02424C5986F00AC4CFA /* skyeye_openssl_opensslconf.h */,
+				FBE7A02524C5986F00AC4CFA /* skyeye_openssl_cfb128.cpp */,
+				FBE7A02624C5986F00AC4CFA /* skyeye_openssl_md5_locl.h */,
+				FBE7A02724C5986F00AC4CFA /* skyeye_openssl_modes.h */,
+				FBE7A02824C5986F00AC4CFA /* skyeye_openssl_md32_common.h */,
+				FBE7A02924C5986F00AC4CFA /* skyeye_openssl_aes.h */,
+				FBE7A02A24C5986F00AC4CFA /* skyeye_openssl_aes_core.cpp */,
+				FBE7A02B24C5986F00AC4CFA /* skyeye_openssl_aes_locl.h */,
+			);
+			path = openssl;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -254,7 +345,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CB1FD4B72046995B00931B5F /* PBXTargetDependency */,
 			);
 			name = MMKVDemo;
 			productName = MMKVDemo;
@@ -290,7 +380,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CB9C2730215E5D2400448B6C /* PBXTargetDependency */,
 			);
 			name = MMKVMacDemo;
 			productName = MMKVMacDemo;
@@ -338,12 +427,6 @@
 			mainGroup = CB1FD41720455E2D00931B5F;
 			productRefGroup = CB1FD42120455E2D00931B5F /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = CB1FD4B12046994C00931B5F /* Products */;
-					ProjectRef = CB1FD4B02046994C00931B5F /* MMKV.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				CB1FD41F20455E2D00931B5F /* MMKVDemo */,
@@ -352,23 +435,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		CB1FD4B52046994D00931B5F /* libMMKV Static.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libMMKV Static.a";
-			remoteRef = CB1FD4B42046994D00931B5F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CB36F25420F8A20C009AF46F /* MMKV.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = MMKV.framework;
-			remoteRef = CB36F25320F8A20C009AF46F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CB1FD41E20455E2D00931B5F /* Resources */ = {
@@ -404,16 +470,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBE7A03A24C5986F00AC4CFA /* skyeye_openssl_md5_dgst.cpp in Sources */,
+				FBE7A03D24C5986F00AC4CFA /* skyeye_openssl_aes_core.cpp in Sources */,
 				CB1FD42820455E2D00931B5F /* ViewController.mm in Sources */,
+				FBE7A03B24C5986F00AC4CFA /* skyeye_openssl_md5_one.cpp in Sources */,
 				FB464DC224931D7400A9B40F /* SkyEyePackObject.m in Sources */,
+				FBE7A03924C5986F00AC4CFA /* skyeye_openssl_aes_cfb.cpp in Sources */,
 				CB1FD43320455E2D00931B5F /* main.m in Sources */,
 				CB9F963920FCA7C500A1C14C /* DemoSwiftUsage.swift in Sources */,
+				FBE7A03224C5986F00AC4CFA /* SkyEyeMMAPQueue.m in Sources */,
 				FB464DBE2493059D00A9B40F /* SkyEyeMMAPQueue.m in Sources */,
+				FBE7A03124C5986F00AC4CFA /* SkyEyeMiniCodedOutputData.mm in Sources */,
+				FBE7A03524C5986F00AC4CFA /* SkyEyeFileConfig.mm in Sources */,
+				FBE7A02C24C5986F00AC4CFA /* SkyEyePackObject.m in Sources */,
+				FBE7A03024C5986F00AC4CFA /* SkyEyeMiniPBUtility.mm in Sources */,
 				FBBDB9E4249A4CA8003CF459 /* SkyEyeDataConfig.m in Sources */,
+				FBE7A02F24C5986F00AC4CFA /* SkyEyeDataManager.mm in Sources */,
+				FBE7A03324C5986F00AC4CFA /* SkyEyeMiniCodedInputData.mm in Sources */,
 				FB464DC82493216700A9B40F /* SkyEyeDataManager.m in Sources */,
+				FBE7A03824C5986F00AC4CFA /* SkyEyeAESCrypt.mm in Sources */,
 				FB9A7B4424A20A9E00EC517B /* AppUsedMemory.m in Sources */,
 				FB464DC524931E4A00A9B40F /* PersonObject.m in Sources */,
 				CB1FD42520455E2D00931B5F /* AppDelegate.m in Sources */,
+				FBE7A03724C5986F00AC4CFA /* SkyEyeMFKV.mm in Sources */,
+				FBE7A03624C5986F00AC4CFA /* SkyEyeMemoryFile.mm in Sources */,
+				FBE7A02E24C5986F00AC4CFA /* SkyEyeMiniPBCoder.mm in Sources */,
+				FBE7A03C24C5986F00AC4CFA /* skyeye_openssl_cfb128.cpp in Sources */,
+				FBE7A02D24C5986F00AC4CFA /* SkyEyeDataConfig.m in Sources */,
+				FBE7A03424C5986F00AC4CFA /* SkyEyeMMKVLog.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,20 +523,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		CB1FD4B72046995B00931B5F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MMKV;
-			targetProxy = CB1FD4B62046995B00931B5F /* PBXContainerItemProxy */;
-		};
 		CB36F24F20F8A20C009AF46F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CB1FD41F20455E2D00931B5F /* MMKVDemo */;
 			targetProxy = CB36F24E20F8A20C009AF46F /* PBXContainerItemProxy */;
-		};
-		CB9C2730215E5D2400448B6C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "MMKV Static";
-			targetProxy = CB9C272F215E5D2400448B6C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -600,6 +674,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Z2KFJNX8WQ;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MMKVDemo/PrefixHeader.pch;
 				INFOPLIST_FILE = MMKVDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -620,6 +697,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Z2KFJNX8WQ;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MMKVDemo/PrefixHeader.pch;
 				INFOPLIST_FILE = MMKVDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

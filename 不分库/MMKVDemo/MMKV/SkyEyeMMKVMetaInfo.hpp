@@ -18,4 +18,29 @@
  * limitations under the License.
  */
 
-#import "SkyEyeMFKV.h"
+#ifndef MMKV_MMKVMETAINFO_H
+#define MMKV_MMKVMETAINFO_H
+
+#include "SkyEyeAESCrypt.h"
+#include <cassert>
+#include <cstdint>
+#include <cstring>
+
+struct PREFIXNAME(MMKVMetaInfo) {
+    uint32_t m_crcDigest = 0;
+    uint32_t m_version = 1;
+    uint32_t m_sequence = 0; // full write-back count
+    unsigned char m_vector[PREFIXNAME(AES_KEY_LEN)] = {0};
+
+    void write(void *ptr) {
+        assert(ptr);
+        memcpy(ptr, this, sizeof(PREFIXNAME(MMKVMetaInfo)));
+    }
+
+    void read(const void *ptr) {
+        assert(ptr);
+        memcpy(this, ptr, sizeof(PREFIXNAME(MMKVMetaInfo)));
+    }
+};
+
+#endif //MMKV_MMKVMETAINFO_H

@@ -18,4 +18,24 @@
  * limitations under the License.
  */
 
-#import "SkyEyeMFKV.h"
+#ifdef __cplusplus
+
+#import <Foundation/Foundation.h>
+
+@interface PREFIXNAME(MiniPBCoder) : NSObject
+
++ (NSData *)encodeDataWithObject:(id)obj;
+
++ (id)decodeObjectOfClass:(Class)cls fromData:(NSData *)oData;
+
+// for NSDictionary
+// note: NSDictionary's key must be NSString
++ (id)decodeContainerOfClass:(Class)cls withValueClass:(Class)valueClass fromData:(NSData *)oData;
+
++ (BOOL)isMiniPBCoderCompatibleObject:(id)object;
+
++ (BOOL)isMiniPBCoderCompatibleType:(Class)cls;
+
+@end
+
+#endif

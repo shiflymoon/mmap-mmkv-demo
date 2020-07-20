@@ -23,7 +23,7 @@ import Foundation
 
 class DemoSwiftUsage : NSObject {
 	@objc func testSwiftFunctionality() {
-
+/*
         guard let mmkv = SkyEyeMFKV(mmapID: "testSwift") else {
             return
         }
@@ -62,6 +62,7 @@ class DemoSwiftUsage : NSObject {
         print("Swift: data = \(str)")
 
         mmkv.removeValue(forKey: "bool")
-        print("Swift: after delete bool = \(mmkv.bool(forKey: "bool"))")
-	}
+        print("Swift: after delete bool = \(mmkv.bool(forKey: "bool"))")*/
+        
+    }
 }

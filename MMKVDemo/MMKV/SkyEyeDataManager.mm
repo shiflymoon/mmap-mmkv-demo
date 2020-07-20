@@ -11,16 +11,29 @@
 #import "SkyEyeDataConfig.h"
 #import <unistd.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "SkyEyeScopedLock.hpp"
 
 static int SkyEyeMaxItemCount = 30;
 static int SkyEyePageSizeCount = 120;
 @interface SkyEyeDataManager ()
 {
-    SkyEyeMFKV * _mkv;
-    SkyEyeMFKV * _currentMKV;
-    SkyEyeDataConfig * _currentDataConfig;
-    SkyEyeMMAPQueue * _queue;
+    PREFIXNAME(MFKV) * _mkv;//根桶
+    
+    PREFIXNAME(MFKV) * _currentMKV;
+    PREFIXNAME(DataConfig) * _currentDataConfig;
+    
+    PREFIXNAME(MMAPQueue) * _eventQueue;
+    PREFIXNAME(MMAPQueue) * _exceptionQueue;
+    PREFIXNAME(MMAPQueue) * _sessionQueue;
+    PREFIXNAME(MMAPQueue) * _pageQueue;
+    
+    SkyEyeStoreDataType _lastStoreType;
+    
     int _mmapFileSize;
+    
+    BOOL _cacheFull;
+    
+    NSRecursiveLock *_lock;
 }
 @end
 @implementation SkyEyeDataManager
@@ -38,17 +51,21 @@ static int SkyEyePageSizeCount = 120;
     self = [super init];
     if(self) {
         _mmapFileSize = getpagesize() * SkyEyePageSizeCount  ;//16k*120 约为2M
+        _lastStoreType = SkyEyeStoreDataTypeNone;
+        _lock = [[NSRecursiveLock alloc] init];
     }
     return self;
 }
 
--(void) setSkyEyeMMKV:(SkyEyeMFKV *) mkv
+-(void) setSkyEyeMMKV:(PREFIXNAME(MFKV) *) mkv
 {
+    PREFIXNAME(CScopedLock) lock(_lock);
     _mkv = mkv; 
     [self loadQueue];
 }
 
--(void) addData:(id) data {
+-(void) addData:(id) data type:(SkyEyeStoreDataType)type{
+    PREFIXNAME(CScopedLock) lock(_lock);
     if(!data) {
         return;
     }
@@ -63,7 +80,8 @@ static int SkyEyePageSizeCount = 120;
      }
      }*/
     @autoreleasepool {//频繁操作的函数，需要增加自动释放池子，构造的临时对象太多，内存会爆掉
-                
+        _cacheFull = NO;
+        
         NSData *binaryData = nil;
         if([data isKindOfClass:[NSData class]]){
             binaryData = data;
@@ -79,40 +97,44 @@ static int SkyEyePageSizeCount = 120;
             return;
         }
         
+        
+        PREFIXNAME(MMAPQueue) * _queue = [self getQueueWithType:type];
         int tail = [_queue queueTail];
-        NSString * tailKey  = [NSString stringWithFormat:@"%d",tail];
+        NSString * tailKey  = [self makeKeyIndex:tail type:type];
         
         //获取目前已有的桶，每个桶有若干组数据
         NSArray * dataFileConfigArray = [_mkv getObjectOfClass:[NSArray class] forKey:@"dataConfig"];
         
         // 判断是否满了
         if([_queue isQueueFull]) {//如果真满，tail一定存在某一个桶中，遍历桶中config，看元素是否满了
-            for(SkyEyeDataConfig * td in dataFileConfigArray){
-                for(NSNumber * indexObj in td.groupArray){
+            for(PREFIXNAME(DataConfig) * td in dataFileConfigArray){
+                NSMutableArray *groupArray = [self getConfigGroupArray:td type:type];
+                for(NSNumber * indexObj in groupArray){
                     if(indexObj.intValue == tail ){
-                        SkyEyeMFKV *tailMKV = [SkyEyeMFKV mmkvWithID:td.fileName];
+                        PREFIXNAME(MFKV) *tailMKV = [PREFIXNAME(MFKV) mmkvWithID:td.fileName];
                         NSArray *tData = [tailMKV getObjectOfClass:[NSArray class] forKey:tailKey];
                         if(tData.count >= SkyEyeMaxItemCount){
                             [tailMKV close];
+                            _cacheFull = YES;
                             return;
+                        }else {
+                            [tailMKV close]; 
                         }
-                        
                     }
                 }
             }
         }
-        __block BOOL contains = [_currentDataConfig containsIndex:tail];
+        __block BOOL contains = [_currentDataConfig containsIndex:tail type:type];
         if(dataFileConfigArray.count == 0) {
-            SkyEyeDataConfig *config = [self makeNewDataConfigWithIndex:tail];
+            PREFIXNAME(DataConfig) *config = [self makeNewDataConfigWithIndex:tail];
             [_mkv setObject:@[config] forKey:@"dataConfig"];
         }else if(!contains) {
-            static dispatch_once_t onceToken;
-            dispatch_once(&onceToken, ^{//首次从本地加在数据到内存
-                
+            //每次发生存储类型切换时候，需要遍历全部桶，找到当前下标所对应的桶，这样做只是为了每个下标都存满M（30个）个元素
+            if(_lastStoreType != type) {
                 //如果存在找到tail所在的桶，否则找到一个能存下新增加数据的桶
-                SkyEyeDataConfig *tempConfig = nil;
-                for(SkyEyeDataConfig *t in dataFileConfigArray){
-                    if([t containsIndex:tail]){
+                PREFIXNAME(DataConfig) *tempConfig = nil;
+                for(PREFIXNAME(DataConfig) *t in dataFileConfigArray){
+                    if([t containsIndex:tail type:type]){
                         tempConfig = t;
                         contains = YES;
                         break;
@@ -122,19 +144,30 @@ static int SkyEyePageSizeCount = 120;
                     }
                 }
                 
+                
                 if(!tempConfig) {//找不到，且当前的所有桶空间不足
+                    if(_currentMKV != nil ) {
+                        [_currentMKV close];
+                    }
                     [self makeNewDataConfigWithIndex:tail];
                 }else {
-                    _currentDataConfig = tempConfig;
-                    _currentMKV = [SkyEyeMFKV mmkvWithID:_currentDataConfig.fileName];
+                    if(![_currentDataConfig.fileName isEqualToString:tempConfig.fileName]){
+                        if(_currentMKV != nil ) {
+                            [_currentMKV close];
+                        }
+                        _currentDataConfig = tempConfig;
+                        _currentMKV = [PREFIXNAME(MFKV) mmkvWithID:_currentDataConfig.fileName];
+                    }
                 }
-            });
+            }
             
         }
         
+        _lastStoreType = type;
+        
         NSArray * tData = nil;
         BOOL isConfigNew = NO;
-        SkyEyeDataConfig *oldConfig = nil;
+        PREFIXNAME(DataConfig) *oldConfig = nil;
         //包含，不包含  ==》空间足，空间不足，四种组合
         if(contains && (_currentDataConfig.leftSize < binaryData.length || _currentMKV.actualSize > _mmapFileSize - binaryData.length)){//包含空间不足
             
@@ -144,13 +177,13 @@ static int SkyEyePageSizeCount = 120;
             BOOL isGroupFull = NO;
             if(tData.count >= SkyEyeMaxItemCount) {//tail下标存储满了，需要存储在tail+1
                 [_queue queueTailMove];
-                [self saveQueue];
+                [self saveQueue:_queue type:type];
                 isGroupFull = YES;
             }
             
             if(!isGroupFull) {//分组group没有满的话，需要移动到新的桶
                 
-                NSArray *tGroupArray = _currentDataConfig.groupArray;
+                NSArray *tGroupArray = [self getConfigGroupArray:_currentDataConfig type:type];
                 NSMutableArray * groupArray = [NSMutableArray arrayWithArray:tGroupArray];
                 for(NSNumber * nu in tGroupArray) {
                     if(nu.intValue == tail) {
@@ -158,7 +191,7 @@ static int SkyEyePageSizeCount = 120;
                     }
                 }
                 _currentDataConfig.leftSize += (int)rawData.length;
-                _currentDataConfig.groupArray = groupArray;
+                [self setConfigGroupArray:_currentDataConfig type:type dataArray:groupArray];
                 [_currentMKV removeValueForKey:tailKey];
             }
             oldConfig = _currentDataConfig;
@@ -174,25 +207,25 @@ static int SkyEyePageSizeCount = 120;
             [newGroupArray addObject:@([_queue queueTail])];
             
             //不能直接减去binaryData，因为以数组存储，数据会压缩
-            _currentDataConfig.groupArray = newGroupArray;
+            [self setConfigGroupArray:_currentDataConfig type:type dataArray:newGroupArray];
             isConfigNew = YES;
             
         }else if(contains &&( _currentDataConfig.leftSize >= binaryData.length && _currentMKV.actualSize < _mmapFileSize - binaryData.length)) {//包含空间足
             tData = [_currentMKV getObjectOfClass:[NSArray class] forKey:tailKey];
             NSData *rawData = [_currentMKV getRawDataForKey:tailKey];
             
-            NSMutableArray * groupArray = _currentDataConfig.groupArray;
+            NSMutableArray * groupArray = [self getConfigGroupArray:_currentDataConfig type:type];
             
             if(tData.count >= SkyEyeMaxItemCount) {//tail下标存储满了，需要存储在tail+1
                 [_queue queueTailMove];
-                [self saveQueue];
+                [self saveQueue:_queue type:type];
                 [groupArray addObject:@([_queue queueTail])];
             }else {
                 _currentDataConfig.leftSize += (int)rawData.length;//不知道刚添加的数据加到数组中被压缩数据大小，所以先加，最后再减 
             }
             
             //不能直接减去binaryData，因为以数组存储，数据会压缩
-            _currentDataConfig.groupArray = groupArray;
+            [self setConfigGroupArray:_currentDataConfig type:type dataArray:groupArray];
             
             isConfigNew = NO;
             
@@ -210,20 +243,23 @@ static int SkyEyePageSizeCount = 120;
             
             
             //不能直接减去binaryData，因为以数组存储，数据会压缩
-            _currentDataConfig.groupArray = groupArray;
+            [self setConfigGroupArray:_currentDataConfig type:type dataArray:groupArray];
             isConfigNew = YES;
             
         }else if(!contains && (_currentDataConfig.leftSize >= binaryData.length && _currentMKV.actualSize < _mmapFileSize - binaryData.length)) {//不包含空间足
             
             NSMutableArray * groupArray = [NSMutableArray array];
-            [groupArray addObjectsFromArray:_currentDataConfig.groupArray];
-            
+            NSArray *tGroupArray = [self getConfigGroupArray:_currentDataConfig type:type];
+            if(tGroupArray.count) {
+                [groupArray addObjectsFromArray:tGroupArray];
+            }
+           
             //新桶增加了新的下标
             [groupArray addObject:@(tail)];  
             
             
             //不能直接减去binaryData，因为以数组存储，数据会压缩
-            _currentDataConfig.groupArray = groupArray;
+            [self setConfigGroupArray:_currentDataConfig type:type dataArray:groupArray];
             isConfigNew = NO;
         }
         
@@ -233,9 +269,12 @@ static int SkyEyePageSizeCount = 120;
             [editArray addObject:data];
             //        [_queue queueTailMove];
             //        [self saveQueue];
-            tailKey  = [NSString stringWithFormat:@"%d",[_queue queueTail]];
+            tail = [_queue queueTail];
+            tailKey  = [self makeKeyIndex:tail type:type];;
         }else {
-            [editArray addObjectsFromArray:tData];
+            if(tData.count) {
+                [editArray addObjectsFromArray:tData];  
+            }
             [editArray addObject:data];
         }
         [_currentMKV setObject:editArray forKey:tailKey];
@@ -248,15 +287,16 @@ static int SkyEyePageSizeCount = 120;
     }
 }
 
--(SkyEyePackObject *) getData {
+-(PREFIXNAME(PackObject) *) getDataWithType:(SkyEyeStoreDataType)type {
+    PREFIXNAME(CScopedLock) lock(_lock);
     @autoreleasepool {
-        
+        PREFIXNAME(MMAPQueue) * _queue = [self getQueueWithType:type];
         int head = [_queue queueHead];
-        NSString * headKey  = [NSString stringWithFormat:@"%d",head];
+        NSString * headKey  =  [self makeKeyIndex:head type:type];
         
         //获取目前已有的桶，每个桶有若干组数据
         NSArray * dataFileConfigArray = [_mkv getObjectOfClass:[NSArray class] forKey:@"dataConfig"];
-        SkyEyeDataConfig * _getDataConfig = nil;
+        PREFIXNAME(DataConfig) * _getDataConfig = nil;
         
         // 判断是否真空了
         if([dataFileConfigArray count] <= 0) {//没有任何桶
@@ -266,8 +306,9 @@ static int SkyEyePageSizeCount = 120;
              *数据大小如果不能被容量整除，比如100，数组容量30，会有10个元素存在tail=3位置，这10个元素要取出来
              */
             BOOL empty = YES;
-            for(SkyEyeDataConfig * td in dataFileConfigArray){
-                if(td.groupArray.count >= 1){
+            for(PREFIXNAME(DataConfig) * td in dataFileConfigArray){
+                NSArray * groupArray = [self getConfigGroupArray:td type:type];
+                if(groupArray.count >= 1){
                     empty = NO;
                     break;
                 }
@@ -280,21 +321,26 @@ static int SkyEyePageSizeCount = 120;
         
         //找到head所在的桶
         BOOL find = NO;
-        for(SkyEyeDataConfig * td in dataFileConfigArray){
-            for(NSNumber * indexObj in td.groupArray){
+        for(PREFIXNAME(DataConfig) * td in dataFileConfigArray){
+            NSArray * groupArray = [self getConfigGroupArray:td type:type];
+            for(NSNumber * indexObj in groupArray){
                 if(indexObj.intValue == head ){
                     _getDataConfig = td;
                     find = YES;
                     break;
                 }
             }
+            if(find) {
+                break;
+            }
         }
         
         if(!find) {
-            SkyEyeDataConfig *tmpDataConfig = nil;
+            PREFIXNAME(DataConfig) *tmpDataConfig = nil;
             for(int i = 0; i<dataFileConfigArray.count; i++) {
                 tmpDataConfig = dataFileConfigArray[i];
-                if(tmpDataConfig.groupArray.count >=1 ){
+                NSArray * groupArray = [self getConfigGroupArray:tmpDataConfig type:type];
+                if(groupArray.count >=1 ){
                     break;
                 }else {
                     tmpDataConfig = nil;
@@ -304,14 +350,18 @@ static int SkyEyePageSizeCount = 120;
                 return nil;
             }
             _getDataConfig = tmpDataConfig;
-            head = ((NSNumber *)[_getDataConfig.groupArray firstObject]).intValue;
+            NSArray * groupArray = [self getConfigGroupArray:_getDataConfig type:type];
+            head = ((NSNumber *)[groupArray firstObject]).intValue;
         }
         
-        SkyEyeMFKV * _getDataMKV =  [SkyEyeMFKV mmkvWithID:_getDataConfig.fileName];
+        PREFIXNAME(MFKV) * _getDataMKV =  [PREFIXNAME(MFKV) mmkvWithID:_getDataConfig.fileName];
         NSArray * tData = [_getDataMKV getObjectOfClass:[NSArray class] forKey:headKey];
-        SkyEyePackObject * packObj = [[SkyEyePackObject alloc] init];
+        PREFIXNAME(PackObject) * packObj = [[PREFIXNAME(PackObject) alloc] init];
         packObj.fileName = _getDataConfig.fileName;
-        [packObj.dataArray addObjectsFromArray:tData];
+        packObj.type = type;
+        if(tData.count >= 1) {
+            [packObj.dataArray addObjectsFromArray:tData];  
+        }
         
         packObj.headIndex = head;
         if(![_currentDataConfig.fileName isEqualToString:_getDataConfig.fileName] && _getDataMKV != _currentMKV){
@@ -323,38 +373,41 @@ static int SkyEyePageSizeCount = 120;
     }
 }
 
--(void) removeData:(SkyEyePackObject *)pObject
+-(void) removeData:(PREFIXNAME(PackObject) *)pObject
 {
+    PREFIXNAME(CScopedLock) lock(_lock);
     @autoreleasepool {
         
         if(!pObject) {
             return;
         }
+        
         //获取目前已有的桶，每个桶有若干组数据
         NSArray * dataFileConfigArray = [_mkv getObjectOfClass:[NSArray class] forKey:@"dataConfig"];
-        SkyEyeDataConfig *rConfig = nil;
-        for(SkyEyeDataConfig *config in dataFileConfigArray) {
+        PREFIXNAME(DataConfig) *rConfig = nil;
+        for(PREFIXNAME(DataConfig) *config in dataFileConfigArray) {
             if([config.fileName isEqualToString: pObject.fileName]){
                 rConfig = config;
                 break;
             }
         }
         
-        SkyEyeMFKV * _getDataMKV =  [SkyEyeMFKV mmkvWithID:pObject.fileName];
-        NSString * removeKey  = [NSString stringWithFormat:@"%d",pObject.headIndex];
+        PREFIXNAME(MFKV) * _getDataMKV =  [PREFIXNAME(MFKV) mmkvWithID:pObject.fileName];
+        NSString * removeKey  = [self makeKeyIndex:pObject.headIndex type:pObject.type]; 
         if(rConfig) {
             NSNumber *findIndexDesc = nil;
-            for(NSNumber *indexDesc in rConfig.groupArray) {
+            NSArray * tgroupArray = [self getConfigGroupArray:rConfig type:pObject.type];
+            for(NSNumber *indexDesc in tgroupArray) {
                 if(indexDesc.intValue == pObject.headIndex){
                     findIndexDesc = indexDesc;
                     break;
                 }
             }
-            NSMutableArray *groupArray = rConfig.groupArray;
+            NSMutableArray *groupArray = [self getConfigGroupArray:rConfig type:pObject.type];
             if(findIndexDesc) {
                 [groupArray removeObject:findIndexDesc];
             }
-            rConfig.groupArray = groupArray;
+            [self setConfigGroupArray:rConfig type:pObject.type dataArray:groupArray];
             rConfig.leftSize +=(int) [_getDataMKV getRawDataForKey:removeKey].length;
             
             [self updateDataConfig:rConfig old:nil isNew:NO];
@@ -367,13 +420,54 @@ static int SkyEyePageSizeCount = 120;
             [_getDataMKV close];
         }
         
+        PREFIXNAME(MMAPQueue) * _queue = [self getQueueWithType:pObject.type];
         [_queue queueHeadMove];
-        [self saveQueue];
+        [self saveQueue:_queue type:pObject.type];
         
     }
 }
 
+-(BOOL) isCacheFull {
+    PREFIXNAME(CScopedLock) lock(_lock);
+    return _cacheFull;
+}
+
+-(void) trim {
+     PREFIXNAME(CScopedLock) lock(_lock);
+    //获取目前已有的桶，每个桶有若干组数据
+    NSArray * dataFileConfigArray = [_mkv getObjectOfClass:[NSArray class] forKey:@"dataConfig"];
+    for(PREFIXNAME(DataConfig) *config in dataFileConfigArray) {
+        if(![_currentDataConfig.fileName isEqualToString:config.fileName]){
+              PREFIXNAME(MFKV) * _getDataMKV =  [PREFIXNAME(MFKV) mmkvWithID:config.fileName];
+            if(_getDataMKV != _currentMKV) {
+                [_getDataMKV trim];
+                [_getDataMKV close];
+            }
+        }
+    }
+}
+#pragma mark - Protocol 
+- (PREFIXNAME(MMKVRecoverStrategic))onMMKVCRCCheckFail:(NSString *)mmapID {
+    return PREFIXNAME(MMKVOnErrorRecover);
+}
+
+- (PREFIXNAME(MMKVRecoverStrategic))onMMKVFileLengthError:(NSString *)mmapID {
+    return PREFIXNAME(MMKVOnErrorRecover);
+}
+
 #pragma mark - private
+-(NSString *) makeKeyIndex:(int) index type:(SkyEyeStoreDataType) type {
+    if(type == SkyEyeStoreDataTypePage) {
+       return  [NSString stringWithFormat:@"%dp",index];
+    }else if(type == SkyEyeStoreDataTypeEvent) {
+       return  [NSString stringWithFormat:@"%de",index]; 
+    }else if( type == SkyEyeStoreDataTypeSession) {
+       return  [NSString stringWithFormat:@"%ds",index];
+    }else if( type == SkyEyeStoreDataTypeException){
+       return  [NSString stringWithFormat:@"%dx",index];
+    }
+    return  [NSString stringWithFormat:@"%d",index];
+}
 
 -(NSString *)md5String:(NSString *)input {
     NSMutableString *hashedUUID = nil;
@@ -395,24 +489,39 @@ static int SkyEyePageSizeCount = 120;
 }
 
 -(void) loadQueue {
-    _queue = [_mkv getObjectOfClass:[SkyEyeMMAPQueue class] forKey:@"Queue"];
-    if(!_queue){
-        _queue = [[SkyEyeMMAPQueue alloc] init];
+    _eventQueue = [_mkv getObjectOfClass:[PREFIXNAME(MMAPQueue) class] forKey:@"EQueue"];
+    if(!_eventQueue){
+        _eventQueue = [[PREFIXNAME(MMAPQueue) alloc] init];
+    }
+    
+    _sessionQueue = [_mkv getObjectOfClass:[PREFIXNAME(MMAPQueue) class] forKey:@"SQueue"];
+    if(!_sessionQueue){
+        _sessionQueue = [[PREFIXNAME(MMAPQueue) alloc] init];
+    } 
+    
+    _pageQueue = [_mkv getObjectOfClass:[PREFIXNAME(MMAPQueue) class] forKey:@"PQueue"];
+    if(!_pageQueue){
+        _pageQueue = [[PREFIXNAME(MMAPQueue) alloc] init];
+    }
+    
+    _exceptionQueue = [_mkv getObjectOfClass:[PREFIXNAME(MMAPQueue) class] forKey:@"ExQueue"];
+    if(!_exceptionQueue){
+        _exceptionQueue = [[PREFIXNAME(MMAPQueue) alloc] init];
     }
 }
 
--(SkyEyeDataConfig *) makeNewDataConfigWithIndex:(int) index {
+-(PREFIXNAME(DataConfig) *) makeNewDataConfigWithIndex:(int) index {
     NSString *fileName = [self md5String:[[NSUUID UUID] UUIDString]];
-    SkyEyeDataConfig *config = [[SkyEyeDataConfig alloc] initWithMaxSize:_mmapFileSize fileName:fileName];
+    PREFIXNAME(DataConfig) *config = [[PREFIXNAME(DataConfig) alloc] initWithMaxSize:_mmapFileSize fileName:fileName];
     /*
     SkyEyeIndexDesc *indexDesc = [[SkyEyeIndexDesc alloc] initWithItemCount:0 index:index];
     config.groupArray = [@[indexDesc] mutableCopy];*/
-    _currentMKV = [SkyEyeMFKV mmkvWithID:fileName];
+    _currentMKV = [PREFIXNAME(MFKV) mmkvWithID:fileName];
     _currentDataConfig = config;
     return config;
 }
 
--(void) updateDataConfig:(SkyEyeDataConfig *) newConfigData old:(SkyEyeDataConfig *) oldConfigData isNew:(BOOL) isNew {
+-(void) updateDataConfig:(PREFIXNAME(DataConfig) *) newConfigData old:(PREFIXNAME(DataConfig) *) oldConfigData isNew:(BOOL) isNew {
     //更新桶数据　
     NSArray * allDataConfig = [_mkv getObjectOfClass:[NSArray class] forKey:@"dataConfig"];
     NSMutableArray * tAllDataConfig = [NSMutableArray array];
@@ -421,7 +530,7 @@ static int SkyEyePageSizeCount = 120;
     }
     
     for(int i =0 ; i<allDataConfig.count ;i++) {
-        SkyEyeDataConfig *t = allDataConfig[i];
+        PREFIXNAME(DataConfig) *t = allDataConfig[i];
         if([t.fileName isEqualToString:oldConfigData.fileName]) {
             [tAllDataConfig replaceObjectAtIndex:i withObject:oldConfigData];
         }
@@ -437,11 +546,56 @@ static int SkyEyePageSizeCount = 120;
 }
 
 
--(void) saveQueue {
+-(void) saveQueue:(PREFIXNAME(MMAPQueue) *) _queue type:(SkyEyeStoreDataType) type{
     if(!_queue){
         return;
     }   
+    if(type == SkyEyeStoreDataTypePage) {
+         [_mkv setObject:_queue forKey:@"PQueue"]; 
+    }else if(type == SkyEyeStoreDataTypeException) {
+         [_mkv setObject:_queue forKey:@"ExQueue"]; 
+    }else if(type == SkyEyeStoreDataTypeSession) {
+         [_mkv setObject:_queue forKey:@"SQueue"]; 
+    }else if(type == SkyEyeStoreDataTypeEvent) {
+         [_mkv setObject:_queue forKey:@"EQueue"]; 
+    }
+}
+
+-(PREFIXNAME(MMAPQueue) *) getQueueWithType:(SkyEyeStoreDataType) type {
+    if(type == SkyEyeStoreDataTypePage) {
+        return _pageQueue;
+    }else if(type == SkyEyeStoreDataTypeException) {
+        return _exceptionQueue;
+    }else if(type == SkyEyeStoreDataTypeSession) {
+        return  _sessionQueue; 
+    }else if(type == SkyEyeStoreDataTypeEvent) {
+        return _eventQueue;
+    }
+    return nil;
+}
+-(NSMutableArray *) getConfigGroupArray:(PREFIXNAME(DataConfig) *) config type:(SkyEyeStoreDataType) type {
+    if(type == SkyEyeStoreDataTypeEvent) {
+        return config.eventGroupArray;
+    }else  if(type == SkyEyeStoreDataTypeException) {
+        return config.exceptionGroupArray;
+    }else  if(type == SkyEyeStoreDataTypeSession) {
+        return config.sessionGroupArray;
+    }else  if(type == SkyEyeStoreDataTypePage) {
+        return config.pageGroupArray;
+    }
     
-    [_mkv setObject:_queue forKey:@"Queue"];
+    return nil;
+}
+
+-(void) setConfigGroupArray:(PREFIXNAME(DataConfig) *) config type:(SkyEyeStoreDataType) type dataArray:(NSMutableArray *) dataArray{
+    if(type == SkyEyeStoreDataTypeEvent) {
+        config.eventGroupArray = dataArray;
+    }else  if(type == SkyEyeStoreDataTypeException) {
+        config.exceptionGroupArray = dataArray;
+    }else  if(type == SkyEyeStoreDataTypeSession) {
+        config.sessionGroupArray = dataArray;
+    }else  if(type == SkyEyeStoreDataTypePage) {
+        config.pageGroupArray = dataArray;
+    }
 }
 @end

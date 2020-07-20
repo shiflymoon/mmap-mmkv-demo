@@ -20,22 +20,21 @@
  *  分配一个新的MMAP文件，所以0,1,2...10这几个key会被分配到file1，11,12...15可能分配到file2
  *  另外由于限制了单个MMAP文件大小（最好为PageSize的整数倍）甚至会出现某个keyn增加一个元素后，对应的文件的空间不足
  *  此时需要将此keyn对应的文件的数据取出，放入新的文件，更新key对应的新文件，同时将key从旧文件中移除
- *  此处简单实现，一旦一个桶放不下了，直接开新桶，导致可能出现的问题是，有些桶内的下标没有存满，比如只存储了1个元素，上报
- *。 按照也可能只上报一条数据。
  */
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SkyEyeDataManager : NSObject
--(void) setSkyEyeMMKV:(SkyEyeMFKV *) mkv;
+@interface SkyEyeDataManager : NSObject<PREFIXNAME(MMKVHandler)>
+-(void) setSkyEyeMMKV:(PREFIXNAME(MFKV) *) mkv;
 +(instancetype) sharedInstance;
 
+-(void) addData:(id) data type:(SkyEyeStoreDataType) type;
+-(PREFIXNAME(PackObject) *) getDataWithType:(SkyEyeStoreDataType) type;
+-(void) removeData:(PREFIXNAME(PackObject) *) pObject;
 
--(void) addData:(id) data;
--(SkyEyePackObject *) getData;
--(void) removeData:(SkyEyePackObject *) pObject;
-
-//-(NSString *) get
+//本地缓存是否已满
+-(BOOL) isCacheFull;
+-(void) trim;
 
 @end
 

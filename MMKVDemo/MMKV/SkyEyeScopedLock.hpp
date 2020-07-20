@@ -18,4 +18,21 @@
  * limitations under the License.
  */
 
-#import "SkyEyeMFKV.h"
+#ifndef ScopedLock_h
+#define ScopedLock_h
+
+#import <Foundation/Foundation.h>
+
+class PREFIXNAME(CScopedLock) {
+    NSRecursiveLock *m_oLock;
+
+public:
+    PREFIXNAME(CScopedLock)(NSRecursiveLock *oLock) : m_oLock(oLock) { [m_oLock lock]; }
+
+    ~PREFIXNAME(CScopedLock)() {
+        [m_oLock unlock];
+        m_oLock = nil;
+    }
+};
+
+#endif /* ScopedLock_h */
